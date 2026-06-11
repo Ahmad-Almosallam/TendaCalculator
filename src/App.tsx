@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
-import { App as AntApp, Button, Popconfirm, Space, Steps, Typography } from 'antd';
+import { App as AntApp, Button, Popconfirm, Space, Steps } from 'antd';
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
-  CalculatorOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
 import { useOrderStore, effectiveRate } from './store/useOrderStore';
@@ -70,28 +69,37 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            <CalculatorOutlined /> Tenda Calculator
-          </Typography.Title>
-          <Popconfirm
-            title="Start over?"
-            description="This clears the order, people, assignments and customs."
-            okText="Reset"
-            okButtonProps={{ danger: true }}
-            onConfirm={() => {
-              resetAll();
-              message.success('Cleared.');
-            }}
-          >
-            <Button danger type="text" icon={<DeleteOutlined />}>
-              Reset
-            </Button>
-          </Popconfirm>
-        </div>
+      <div className="app-sheet">
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <div className="app-header">
+            <div className="brand">
+              <span className="brand-mark" aria-hidden>
+                <CourtMark />
+              </span>
+              <span className="brand-text">
+                <h1 className="brand-title">
+                  Tenda<em>·</em>Calculator
+                </h1>
+                <span className="brand-tagline">Padel split · EUR → SAR</span>
+              </span>
+            </div>
+            <Popconfirm
+              title="Start over?"
+              description="This clears the order, people, assignments and customs."
+              okText="Reset"
+              okButtonProps={{ danger: true }}
+              onConfirm={() => {
+                resetAll();
+                message.success('Cleared.');
+              }}
+            >
+              <Button danger type="text" icon={<DeleteOutlined />}>
+                Reset
+              </Button>
+            </Popconfirm>
+          </div>
 
-        <Steps
+          <Steps
           current={currentStep}
           items={STEPS}
           size="small"
@@ -121,8 +129,24 @@ export default function App() {
               {currentStep === 2 ? 'Calculate' : 'Next'} <ArrowRightOutlined />
             </Button>
           )}
-        </div>
-      </Space>
+          </div>
+        </Space>
+      </div>
     </div>
+  );
+}
+
+/* Court-net mark: a padel ball over service lines. */
+function CourtMark() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="7" fill="currentColor" />
+      <path
+        d="M6.5 7.5C9 10 9 14 6.5 16.5M17.5 7.5C15 10 15 14 17.5 16.5"
+        stroke="#0a4438"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }

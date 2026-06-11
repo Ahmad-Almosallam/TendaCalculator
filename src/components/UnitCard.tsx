@@ -36,11 +36,11 @@ export default function UnitCard({
       style={{
         transform: CSS.Translate.toString(transform),
         opacity: isDragging ? 0.4 : 1,
-        background: selected ? '#e6f4ff' : '#fff',
-        border: `1px solid ${selected ? '#1677ff' : '#d9d9d9'}`,
-        borderLeft: `4px solid ${accentColor ?? '#d9d9d9'}`,
-        borderRadius: 6,
-        padding: '6px 10px',
+        background: selected ? '#e9f3ee' : 'var(--surface-raised, #fff)',
+        border: `1px solid ${selected ? 'var(--court, #0e5c4a)' : 'var(--line-soft, #e7dfd1)'}`,
+        borderLeft: `4px solid ${accentColor ?? 'var(--line, #ddd3c2)'}`,
+        borderRadius: 9,
+        padding: '7px 11px',
         display: 'flex',
         alignItems: 'center',
         gap: 8,
@@ -65,7 +65,7 @@ export default function UnitCard({
               {unit.index + 1}/{unit.item.qty}
             </Tag>
           )}
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+          <Typography.Text type="secondary" className="money" style={{ fontSize: 12 }}>
             {formatEur(unit.valueCents)}
           </Typography.Text>
         </div>

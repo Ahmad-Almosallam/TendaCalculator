@@ -1,3 +1,38 @@
+/* ============================================================
+   Tenda Calculator — "Padel Club" theme
+   Deep court green · volt-lime accent · warm clay paper · ledger mono
+   ============================================================ */
+
+:root {
+  --paper: #f1ece1;
+  --paper-deep: #e9e2d3;
+  --surface: #fcf9f2;
+  --surface-raised: #ffffff;
+
+  --ink: #16201c;
+  --ink-soft: #5d6b63;
+  --ink-faint: #93998f;
+
+  --court: #0e5c4a;
+  --court-deep: #0a4438;
+  --court-bright: #14987a;
+  --volt: #d7f94b;
+  --volt-deep: #b6df1f;
+  --clay: #c4761b;
+
+  --line: #ddd3c2;
+  --line-soft: #e7dfd1;
+  --court-line: rgba(14, 92, 74, 0.1);
+
+  --shadow-sm: 0 1px 2px rgba(20, 32, 28, 0.06);
+  --shadow-md: 0 10px 30px -12px rgba(20, 32, 28, 0.28);
+  --shadow-lg: 0 24px 60px -24px rgba(10, 68, 56, 0.4);
+
+  --font-display: 'Clash Display', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -6,45 +41,267 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: #f5f5f5;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background-color: var(--paper);
+  /* Court-line geometry + warm vignette — quiet atmosphere, not a pattern shout */
+  background-image:
+    radial-gradient(120% 80% at 50% -10%, rgba(20, 152, 122, 0.12) 0%, transparent 55%),
+    radial-gradient(100% 60% at 100% 100%, rgba(215, 249, 75, 0.1) 0%, transparent 50%),
+    linear-gradient(var(--court-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--court-line) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    100% 100%,
+    52px 52px,
+    52px 52px;
+  background-position:
+    0 0,
+    0 0,
+    -1px -1px,
+    -1px -1px;
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* Mobile-first container: full width with small padding, capped on larger screens */
+/* ---- App shell ------------------------------------------------ */
+
 .app-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 12px;
+  padding: 14px 12px 40px;
 }
 
 @media (min-width: 768px) {
   .app-container {
-    padding: 24px;
+    padding: 28px 24px 56px;
   }
 }
 
-/* Draggable unit cards must not trigger browser touch gestures while dragging */
+/* The whole wizard sits on a raised "court sheet" */
+.app-sheet {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .app-sheet {
+    padding: 26px 28px;
+  }
+}
+
+/* a thin volt baseline along the top of the sheet — the court's service line */
+.app-sheet::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--court) 0%, var(--court-bright) 55%, var(--volt) 100%);
+}
+
+/* ---- Branded header ------------------------------------------ */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-mark {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: var(--court);
+  color: var(--volt);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+/* tiny court net lines inside the logo tile */
+.brand-mark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(215, 249, 75, 0.22) 1px, transparent 1px);
+  background-size: 7px 7px;
+  opacity: 0.5;
+}
+
+.brand-mark svg {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brand-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(20px, 5vw, 27px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.brand-title em {
+  font-style: normal;
+  color: var(--court);
+}
+
+.brand-tagline {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Display typography for headings -------------------------- */
+
+h1, h2, h3, h4, h5,
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5,
+h1.ant-typography,
+h2.ant-typography,
+h3.ant-typography,
+h4.ant-typography,
+h5.ant-typography {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* ---- Money figures read as a ledger --------------------------- */
+
+.money,
+.ant-statistic-content,
+.ant-statistic-content-value,
+.ant-statistic-content-prefix,
+.ant-table-cell[align='right'],
+.ant-table-cell.ant-table-cell-align-right {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.02em;
+}
+
+/* ---- Steps: a confident court scoreboard ---------------------- */
+
+.ant-steps {
+  background: var(--paper-deep);
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  padding: 14px 14px 10px;
+}
+
+.ant-steps .ant-steps-item-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+.ant-steps .ant-steps-item-process .ant-steps-item-icon {
+  background: var(--court);
+  border-color: var(--court);
+  box-shadow: 0 0 0 4px rgba(14, 92, 74, 0.15);
+}
+
+.ant-steps .ant-steps-item-finish .ant-steps-item-icon {
+  border-color: var(--court);
+  background: transparent;
+}
+.ant-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+  color: var(--court);
+}
+
+/* ---- Cards: warm, crisp, lightly lifted ----------------------- */
+
+.ant-card {
+  border-color: var(--line-soft);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.ant-card-head-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+/* ---- Buttons -------------------------------------------------- */
+
+.ant-btn {
+  font-family: var(--font-body);
+}
+
+.ant-btn-primary {
+  background: var(--court);
+}
+.ant-btn-primary:not(:disabled):hover {
+  background: var(--court-deep) !important;
+}
+
+/* ---- Draggable unit cards ------------------------------------- */
+
 .unit-card {
   touch-action: manipulation;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
+  transition: box-shadow 0.15s ease, transform 0.06s ease, background 0.15s ease;
+}
+
+.unit-card:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .unit-card:active {
   cursor: grabbing;
 }
 
-/* Assignment board: Unassigned in its own lane, people buckets in an adaptive
-   masonry that packs tightly and fills the available width. */
+.unit-card .money {
+  color: var(--ink-soft);
+}
+
+/* ---- Assignment board ----------------------------------------- */
+
 .assign-board {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   align-items: stretch;
 }
 
@@ -63,34 +320,138 @@ body {
   .unassigned-lane {
     flex: 0 0 340px;
     position: sticky;
-    top: 8px;
+    top: 12px;
   }
 }
 
 .people-lane {
   flex: 1;
   min-width: 0;
-  /* auto-fit as many ~290px columns as the lane is wide; buckets pack by height */
   column-width: 290px;
-  column-gap: 12px;
+  column-gap: 14px;
 }
 
 .bucket-cell {
   break-inside: avoid;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
+
+/* the Unassigned pool gets a dashed "waiting area" treatment */
+.unassigned-lane .ant-card {
+  background: var(--paper-deep);
+  border-style: dashed;
+  border-color: var(--line);
+}
+
+/* ---- Selection bar -------------------------------------------- */
 
 .selection-bar {
   position: sticky;
-  top: 8px;
+  top: 10px;
   z-index: 20;
-  background: #fff;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  padding: 8px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  background: var(--court);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  animation: pop-in 0.18s ease both;
+}
+
+.selection-bar b {
+  font-family: var(--font-display);
+}
+
+.selection-bar .ant-typography {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.selection-bar .ant-btn {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* ---- Results: the grand totals carry the volt energy ---------- */
+
+.results-hero {
+  position: relative;
+  border-radius: 18px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, var(--court-deep) 0%, var(--court) 70%);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.results-hero::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--volt) 0%, transparent 70%);
+  opacity: 0.35;
+}
+
+.results-hero .ant-statistic-content-value,
+.person-total .ant-statistic-content-value {
+  font-family: var(--font-mono);
+}
+
+/* person result cards: the grand SAR figure is the hero */
+.person-total .ant-statistic-content {
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.person-total .ant-card-head {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+/* ---- Page-load choreography ----------------------------------- */
+
+.app-sheet > .ant-space-vertical > .ant-space-item {
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.app-sheet > .ant-space-vertical > .ant-space-item:nth-child(1) { animation-delay: 0.02s; }
+.app-sheet > .ant-space-vertical > .ant-space-item:nth-child(2) { animation-delay: 0.07s; }
+.app-sheet > .ant-space-vertical > .ant-space-item:nth-child(3) { animation-delay: 0.12s; }
+.app-sheet > .ant-space-vertical > .ant-space-item:nth-child(4) { animation-delay: 0.17s; }
+.app-sheet > .ant-space-vertical > .ant-space-item:nth-child(n + 5) { animation-delay: 0.2s; }
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  .app-sheet > .ant-space-vertical > .ant-space-item,
+  .selection-bar {
+    animation: none !important;
+    transition: none !important;
+  }
 }

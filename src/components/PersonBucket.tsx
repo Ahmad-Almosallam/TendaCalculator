@@ -38,7 +38,11 @@ export default function PersonBucket({
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
           {color && <Badge color={color} />}
           {title}
-          <Typography.Text type="secondary" style={{ fontWeight: 'normal', fontSize: 12 }}>
+          <Typography.Text
+            type="secondary"
+            className="money"
+            style={{ fontWeight: 'normal', fontSize: 12 }}
+          >
             {count} item{count === 1 ? '' : 's'} · {formatEur(subtotalCents)}
           </Typography.Text>
         </span>
@@ -56,8 +60,9 @@ export default function PersonBucket({
         ))
       }
       style={{
-        borderColor: isOver ? (color ?? '#1677ff') : undefined,
-        boxShadow: isOver ? `0 0 0 2px ${color ?? '#1677ff'}33` : undefined,
+        borderColor: isOver ? (color ?? 'var(--court)') : undefined,
+        boxShadow: isOver ? `0 0 0 3px ${color ?? '#0e5c4a'}2e` : undefined,
+        transform: isOver ? 'translateY(-1px)' : undefined,
       }}
       styles={{ body: collapsed ? { display: 'none' } : { display: 'flex', flexDirection: 'column', gap: 6, minHeight: 48 } }}
     >

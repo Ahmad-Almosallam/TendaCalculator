@@ -96,6 +96,7 @@ export default function ResultsStep() {
           <Col xs={24} sm={12} lg={8} key={r.person.id}>
             <Card
               size="small"
+              className="person-total"
               title={
                 <span>
                   <Badge color={r.person.color} style={{ marginRight: 6 }} />
