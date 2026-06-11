@@ -73,6 +73,10 @@ await must('step 2: bulk assign remaining to Ali', async () => {
 });
 
 await must('step 2: tap-to-assign one unit to Omar via bottom sheet', async () => {
+  // Every item is now assigned, so all buckets auto-collapse ("mark all done"). Expand Ali
+  // (who holds the remaining units) with Edit before reaching one of his hidden unit cards.
+  const ali = page.locator('.ant-card', { hasText: 'Ali' });
+  await ali.getByRole('button', { name: 'Edit' }).click();
   await page.locator('.unit-card').first().click();
   await page.locator('.ant-drawer').getByRole('button', { name: /Omar/ }).click();
   // Omar's bucket header now reads "1 item · <price>"

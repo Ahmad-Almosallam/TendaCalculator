@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -32,7 +32,13 @@ export default function AssignStep() {
   const [activeUnit, setActiveUnit] = useState<Unit | null>(null);
   const [sheetUnit, setSheetUnit] = useState<Unit | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  // Start with every person collapsed when the order is already fully assigned — this is the
+  // state on returning to Assign from Customs (the component remounts), so all cards stay "done".
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => {
+    const initialUnits = buildUnits(items);
+    const allAssigned = initialUnits.length > 0 && initialUnits.every((u) => assignments[u.unitId]);
+    return allAssigned ? new Set(people.map((p) => p.id)) : new Set();
+  });
 
   const units = useMemo(() => buildUnits(items), [items]);
   const unitsById = useMemo(() => new Map(units.map((u) => [u.unitId, u])), [units]);
@@ -40,6 +46,18 @@ export default function AssignStep() {
 
   const unassigned = units.filter((u) => !assignments[u.unitId]);
   const byPerson = (personId: string) => units.filter((u) => assignments[u.unitId] === personId);
+
+  // Once every item is assigned, mark all people "done" by collapsing their cards. Tracking the
+  // previous value means we only collapse on the not-fully-assigned → fully-assigned transition,
+  // so re-expanding a card to review (while everything stays assigned) isn't undone.
+  const allAssigned = units.length > 0 && unassigned.length === 0;
+  const prevAllAssigned = useRef(allAssigned);
+  useEffect(() => {
+    if (allAssigned && !prevAllAssigned.current) {
+      setCollapsed(new Set(people.map((p) => p.id)));
+    }
+    prevAllAssigned.current = allAssigned;
+  }, [allAssigned, people]);
 
   // Tap opens the sheet; drag starts only after 8px (pointer) or a 200ms long-press (touch),
   // so the two interactions never conflict.
