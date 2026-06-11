@@ -14,6 +14,7 @@ dist-ssr
 
 # smoke-test output
 scripts/screenshot-*.png
+scripts/shot-*.png
 
 # Editor directories and files
 .vscode/*

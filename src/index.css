@@ -38,3 +38,59 @@ body {
 .unit-card:active {
   cursor: grabbing;
 }
+
+/* Assignment board: Unassigned in its own lane, people buckets in an adaptive
+   masonry that packs tightly and fills the available width. */
+.assign-board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+@media (min-width: 900px) {
+  .assign-board {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.unassigned-lane {
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .unassigned-lane {
+    flex: 0 0 340px;
+    position: sticky;
+    top: 8px;
+  }
+}
+
+.people-lane {
+  flex: 1;
+  min-width: 0;
+  /* auto-fit as many ~290px columns as the lane is wide; buckets pack by height */
+  column-width: 290px;
+  column-gap: 12px;
+}
+
+.bucket-cell {
+  break-inside: avoid;
+  margin-bottom: 12px;
+}
+
+.selection-bar {
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}

@@ -39,6 +39,7 @@ interface OrderState {
   renamePerson: (id: string, name: string) => void;
   removePerson: (id: string) => void;
   assign: (unitId: string, personId: string | null) => void;
+  assignMany: (unitIds: string[], personId: string | null) => void;
   assignAllRemaining: (personId: string) => void;
   setCustoms: (halalas: number) => void;
   setManualRate: (rate: number | null) => void;
@@ -148,6 +149,16 @@ export const useOrderStore = create<OrderState>()(
           const assignments = { ...s.assignments };
           if (personId === null) delete assignments[unitId];
           else assignments[unitId] = personId;
+          return { assignments };
+        }),
+
+      assignMany: (unitIds, personId) =>
+        set((s) => {
+          const assignments = { ...s.assignments };
+          for (const unitId of unitIds) {
+            if (personId === null) delete assignments[unitId];
+            else assignments[unitId] = personId;
+          }
           return { assignments };
         }),
 

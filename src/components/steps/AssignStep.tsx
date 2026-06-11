@@ -9,8 +9,8 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import { Col, Dropdown, Button, Row, Space, Typography, Empty } from 'antd';
-import { ThunderboltOutlined, DownOutlined } from '@ant-design/icons';
+import { Badge, Button, Dropdown, Space, Typography, Empty } from 'antd';
+import { ThunderboltOutlined, DownOutlined, CloseOutlined } from '@ant-design/icons';
 import { useOrderStore } from '../../store/useOrderStore';
 import { buildUnits } from '../../lib/split';
 import type { Unit } from '../../types';
@@ -26,10 +26,13 @@ export default function AssignStep() {
   const people = useOrderStore((s) => s.people);
   const assignments = useOrderStore((s) => s.assignments);
   const assign = useOrderStore((s) => s.assign);
+  const assignMany = useOrderStore((s) => s.assignMany);
   const assignAllRemaining = useOrderStore((s) => s.assignAllRemaining);
 
   const [activeUnit, setActiveUnit] = useState<Unit | null>(null);
   const [sheetUnit, setSheetUnit] = useState<Unit | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
 
   const units = useMemo(() => buildUnits(items), [items]);
   const unitsById = useMemo(() => new Map(units.map((u) => [u.unitId, u])), [units]);
@@ -57,6 +60,29 @@ export default function AssignStep() {
     assign(String(e.active.id), target === UNASSIGNED ? null : target);
   };
 
+  const toggleSelect = (unit: Unit) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(unit.unitId)) next.delete(unit.unitId);
+      else next.add(unit.unitId);
+      return next;
+    });
+
+  const clearSelection = () => setSelected(new Set());
+
+  const bulkAssign = (personId: string | null) => {
+    assignMany([...selected], personId);
+    clearSelection();
+  };
+
+  const toggleCollapsed = (personId: string) =>
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(personId)) next.delete(personId);
+      else next.add(personId);
+      return next;
+    });
+
   const renderUnits = (list: Unit[]) =>
     list.map((u) => (
       <UnitCard
@@ -64,19 +90,22 @@ export default function AssignStep() {
         unit={u}
         accentColor={colorByPerson.get(assignments[u.unitId] ?? '')}
         onTap={setSheetUnit}
+        selected={selected.has(u.unitId)}
+        onToggleSelect={toggleSelect}
       />
     ));
 
   return (
     <Space direction="vertical" size="middle" style={{ width: '100%' }}>
       <Typography.Paragraph style={{ marginBottom: 0 }}>
-        Add the people splitting this order, then <b>tap an item</b> to pick who gets it — or drag
-        it onto a person (long-press on touch screens).
+        Add the people splitting this order, then <b>tap an item</b> to assign it one at a time, or
+        <b> tick several</b> and assign them together. You can also drag an item onto a person
+        (long-press on touch screens).
       </Typography.Paragraph>
 
       <PeopleManager />
 
-      {people.length > 0 && unassigned.length > 0 && (
+      {people.length > 0 && unassigned.length > 0 && selected.size === 0 && (
         <Dropdown
           menu={{
             items: people.map((p) => ({ key: p.id, label: p.name })),
@@ -89,9 +118,31 @@ export default function AssignStep() {
         </Dropdown>
       )}
 
+      {selected.size > 0 && (
+        <div className="selection-bar">
+          <b>{selected.size} selected</b>
+          <Typography.Text type="secondary">→ assign to:</Typography.Text>
+          {people.map((p) => (
+            <Button key={p.id} size="small" onClick={() => bulkAssign(p.id)}>
+              <Badge color={p.color} style={{ marginRight: 6 }} />
+              {p.name}
+            </Button>
+          ))}
+          {people.length === 0 && (
+            <Typography.Text type="secondary">Add people first.</Typography.Text>
+          )}
+          <Button size="small" onClick={() => bulkAssign(null)}>
+            Unassign
+          </Button>
+          <Button size="small" type="text" icon={<CloseOutlined />} onClick={clearSelection}>
+            Clear
+          </Button>
+        </div>
+      )}
+
       <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
-        <Row gutter={[12, 12]}>
-          <Col xs={24} md={people.length > 0 ? 10 : 24}>
+        <div className="assign-board">
+          <div className="unassigned-lane">
             <PersonBucket
               id={UNASSIGNED}
               title="Unassigned"
@@ -104,28 +155,31 @@ export default function AssignStep() {
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="All items assigned" />
               )}
             </PersonBucket>
-          </Col>
-          <Col xs={24} md={14}>
-            <Row gutter={[12, 12]}>
+          </div>
+          {people.length > 0 && (
+            <div className="people-lane">
               {people.map((p) => {
                 const list = byPerson(p.id);
                 return (
-                  <Col xs={24} lg={12} key={p.id}>
+                  <div className="bucket-cell" key={p.id}>
                     <PersonBucket
                       id={p.id}
                       title={p.name}
                       color={p.color}
                       subtotalCents={list.reduce((a, u) => a + u.valueCents, 0)}
                       count={list.length}
+                      collapsible
+                      collapsed={collapsed.has(p.id)}
+                      onToggleCollapsed={() => toggleCollapsed(p.id)}
                     >
                       {renderUnits(list)}
                     </PersonBucket>
-                  </Col>
+                  </div>
                 );
               })}
-            </Row>
-          </Col>
-        </Row>
+            </div>
+          )}
+        </div>
         <DragOverlay>
           {activeUnit && <UnitCard unit={activeUnit} onTap={() => {}} overlay />}
         </DragOverlay>

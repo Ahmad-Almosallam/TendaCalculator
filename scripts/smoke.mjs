@@ -49,7 +49,24 @@ await must('step 2: add people', async () => {
   await page.getByText('Sara').first().waitFor();
 });
 
-await must('step 2: bulk assign to Ali', async () => {
+await must('step 2: multi-select 3 items and bulk-assign to Sara', async () => {
+  const checks = page.locator('.unit-card .ant-checkbox-input');
+  for (let i = 0; i < 3; i++) await checks.nth(i).check();
+  await page.locator('.selection-bar').getByText('3 selected').waitFor();
+  await page.locator('.selection-bar').getByRole('button', { name: /Sara/ }).click();
+  // Sara's bucket header should now read "3 items"
+  await page.locator('.ant-card', { hasText: 'Sara' }).getByText(/3 items ·/).waitFor({ timeout: 5000 });
+});
+
+await must('step 2: collapse Sara with Done, then re-expand with Edit', async () => {
+  const sara = page.locator('.ant-card', { hasText: 'Sara' });
+  await sara.getByRole('button', { name: 'Done' }).click();
+  await sara.getByRole('button', { name: 'Edit' }).waitFor({ timeout: 5000 });
+  await sara.getByRole('button', { name: 'Edit' }).click();
+  await sara.getByRole('button', { name: 'Done' }).waitFor({ timeout: 5000 });
+});
+
+await must('step 2: bulk assign remaining to Ali', async () => {
   await page.getByRole('button', { name: /Assign all remaining/ }).click();
   await page.getByRole('menuitem', { name: 'Ali' }).click();
   await page.getByText('All items assigned').waitFor({ timeout: 5000 });

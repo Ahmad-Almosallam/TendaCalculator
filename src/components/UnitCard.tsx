@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Tag, Typography } from 'antd';
+import { Checkbox, Tag, Typography } from 'antd';
 import type { Unit } from '../types';
 import { formatEur } from '../lib/money';
 
@@ -10,9 +10,18 @@ interface Props {
   onTap: (unit: Unit) => void;
   /** render-only mode for the DragOverlay */
   overlay?: boolean;
+  selected?: boolean;
+  onToggleSelect?: (unit: Unit) => void;
 }
 
-export default function UnitCard({ unit, accentColor, onTap, overlay }: Props) {
+export default function UnitCard({
+  unit,
+  accentColor,
+  onTap,
+  overlay,
+  selected,
+  onToggleSelect,
+}: Props) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: unit.unitId,
     disabled: overlay,
@@ -27,8 +36,8 @@ export default function UnitCard({ unit, accentColor, onTap, overlay }: Props) {
       style={{
         transform: CSS.Translate.toString(transform),
         opacity: isDragging ? 0.4 : 1,
-        background: '#fff',
-        border: '1px solid #d9d9d9',
+        background: selected ? '#e6f4ff' : '#fff',
+        border: `1px solid ${selected ? '#1677ff' : '#d9d9d9'}`,
         borderLeft: `4px solid ${accentColor ?? '#d9d9d9'}`,
         borderRadius: 6,
         padding: '6px 10px',
@@ -38,6 +47,13 @@ export default function UnitCard({ unit, accentColor, onTap, overlay }: Props) {
         boxShadow: overlay ? '0 4px 12px rgba(0,0,0,0.25)' : undefined,
       }}
     >
+      {!overlay && onToggleSelect && (
+        <Checkbox
+          checked={selected}
+          onClick={(e) => e.stopPropagation()}
+          onChange={() => onToggleSelect(unit)}
+        />
+      )}
       <div style={{ flex: 1, minWidth: 0 }}>
         <Typography.Text style={{ fontSize: 13 }} ellipsis={{ tooltip: unit.item.name }}>
           {unit.item.name}
