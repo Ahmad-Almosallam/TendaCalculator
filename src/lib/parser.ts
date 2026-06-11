@@ -1,15 +1,6 @@
 import type { OrderItem, FeeLine, ParseResult } from '../types';
 import { parseEuro, isPrice } from './money';
-
-let seq = 0;
-function uid(prefix: string): string {
-  return `${prefix}-${++seq}-${Math.abs(hash(String(seq) + prefix))}`;
-}
-function hash(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-  return h;
-}
+import { uid } from './uid';
 
 /** Split a line into fields: tabs first, falling back to runs of 2+ spaces for pastes that lost tabs. */
 function tokenize(line: string): string[] {
