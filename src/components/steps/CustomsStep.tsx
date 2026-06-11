@@ -25,6 +25,7 @@ export default function CustomsStep() {
           </Typography.Text>
           <InputNumber
             addonAfter="SAR"
+            inputMode="decimal"
             min={0}
             step={0.01}
             precision={2}

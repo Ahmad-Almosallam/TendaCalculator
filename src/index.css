@@ -324,16 +324,33 @@ h5.ant-typography {
   }
 }
 
+/* Mobile: a plain flex column. The desktop multi-column layout (below) is scoped to ≥900px
+   because iOS Safari does not reflow a multicol container's height when the cards collapse,
+   leaving phantom blank space below the (now short) content. */
 .people-lane {
   flex: 1;
   min-width: 0;
-  column-width: 290px;
-  column-gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (min-width: 900px) {
+  .people-lane {
+    display: block; /* multicol needs block flow */
+    column-width: 290px;
+    column-gap: 14px;
+  }
 }
 
 .bucket-cell {
-  break-inside: avoid;
-  margin-bottom: 14px;
+  break-inside: avoid; /* harmless in flex; needed for the desktop multicol path */
+}
+
+@media (min-width: 900px) {
+  .bucket-cell {
+    margin-bottom: 14px;
+  }
 }
 
 /* the Unassigned pool gets a dashed "waiting area" treatment */
@@ -341,6 +358,19 @@ h5.ant-typography {
   background: var(--paper-deep);
   border-style: dashed;
   border-color: var(--line);
+}
+
+/* ---- Mobile inputs: no zoom-on-focus -------------------------- */
+/* iOS Safari auto-zooms when a focused field's font-size is under 16px (and never restores the
+   prior zoom). Forcing ≥16px on small screens prevents the zoom entirely while keeping intentional
+   pinch-zoom available (unlike maximum-scale/user-scalable). */
+@media (max-width: 767px) {
+  .ant-input,
+  .ant-input-number-input,
+  .ant-input-affix-wrapper input,
+  textarea.ant-input {
+    font-size: 16px;
+  }
 }
 
 /* ---- Selection bar -------------------------------------------- */

@@ -58,6 +58,7 @@ export default function RateControl() {
         <InputNumber
           addonBefore="1 € ="
           addonAfter="SAR"
+          inputMode="decimal"
           min={0}
           step={0.0001}
           precision={4}

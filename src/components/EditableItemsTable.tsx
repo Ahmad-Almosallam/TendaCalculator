@@ -54,6 +54,7 @@ export default function EditableItemsTable() {
       render: (_: unknown, item: OrderItem) => (
         <InputNumber
           size="small"
+          inputMode="numeric"
           min={1}
           style={{ width: '100%' }}
           value={item.qty}
@@ -71,6 +72,7 @@ export default function EditableItemsTable() {
       render: (_: unknown, item: OrderItem) => (
         <InputNumber
           size="small"
+          inputMode="decimal"
           min={0}
           step={0.01}
           style={{ width: '100%' }}
@@ -90,6 +92,7 @@ export default function EditableItemsTable() {
       render: (_: unknown, item: OrderItem) => (
         <InputNumber
           size="small"
+          inputMode="decimal"
           min={0}
           step={0.01}
           style={{ width: '100%' }}

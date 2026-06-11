@@ -29,6 +29,7 @@ export default function FeeTable() {
       render: (_: unknown, fee: FeeLine) => (
         <InputNumber
           size="small"
+          inputMode="decimal"
           min={0}
           step={0.01}
           style={{ width: '100%' }}
